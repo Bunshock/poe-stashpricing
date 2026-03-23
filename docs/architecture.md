@@ -7,7 +7,7 @@
 | **ValuationService** | The Brain. Orchestrates fetching and pricing logic. | Business Logic Layer |
 | **SmartFilter** | Classifier. Identifies which items need deep pricing. | Predicate-based filtering |
 | **PoeApiService** | Data Source. Communicates with GGG for items/chars. | WebFlux (Async WebClient) |
-| **PoeNinjaService** | Fast Pricing. Bulk prices for currency and common items. | In-memory Map (`O(1)`) |
+| **PoeNinjaApiService** | Fast Pricing. Bulk prices for currency and common items. | In-memory Map ($O(1)$) |
 | **PoeTradeApiService** | Deep Pricing. Values Rares/Uniques via Official Trade API. | JSON Query Builder |
 | **Snapshots** | Persistence. Stores historical wealth data by League. | Spring Data JPA + PostgreSQL |
 
@@ -34,7 +34,7 @@ classDiagram
  
     class ValuationService {
         -PoeApiService poeApiService
-        -PoeNinjaService poeNinjaService
+        -PoeNinjaApiService poeNinjaService
         -PoeTradeApiService poeTradeApiService
         -StashSnapshotRepository stashSnapshotRepository
         -CharacterSnapshotRepository characterSnapshotRepository
@@ -76,7 +76,7 @@ classDiagram
         -Map~String, StashItem~ equippedItems
     }
 
-    class PoeNinjaService {
+    class PoeNinjaApiService {
         -WebClient ninjaClient
         -Map~String, Double~ priceCache
         +refreshPrices(String league) void
@@ -90,6 +90,7 @@ classDiagram
     }
 
     class StashSummary {
+        <<DTO>>
         +double totalChaos
         +double totalDivines
         +List~StashItem~ topItems
@@ -97,6 +98,7 @@ classDiagram
     }
 
     class CharacterSummary {
+        <<DTO>>
         +double totalChaos
         +double totalDivines
         +Map~String, StashItem~ equippedItems
@@ -152,7 +154,7 @@ classDiagram
     StashController --> WealthSyncManager
     WealthSyncManager --> ValuationService
     ValuationService --> PoeApiService
-    ValuationService --> PoeNinjaService
+    ValuationService --> PoeNinjaApiService
     ValuationService --> PoeTradeApiService
     PoeApiService --> SmartFilter
     
@@ -165,7 +167,7 @@ classDiagram
     %% Persistence Logic
     ValuationService ..> StashSnapshotRepository : Dependency (Instantiates)
     StashSnapshotRepository ..> StashSnapshot
-    StashSnapshot "1" *-- "1..*" TabSnapshot
+    StashSnapshot "1" *-- "many" TabSnapshot
     StashSnapshot "1" *-- "1" SnapshotItem
     ValuationService ..> CharacterSnapshotRepository : Dependency (Instantiates)
     CharacterSnapshotRepository ..> CharacterSnapshot
