@@ -2,7 +2,8 @@
 ---
 | Component | Responsibility | Detail |
 | :--- | :--- | :--- |
-| **StashController** | Entry Point. Exposes REST endpoints for the UI. | Spring RestController |
+| **StashController** | Entry Point for Stash requests. Exposes REST endpoints for the UI. | Spring RestController |
+| **CharacterController** | Entry Point for Character. Exposes REST endpoints for the UI. | Spring RestController |
 | **WealthSyncManager** | Traffic Control. Manages Rate Limits and scheduling. | `@Scheduled` & Caffeine Cache |
 | **ValuationService** | The Brain. Orchestrates fetching and pricing logic. | Business Logic Layer |
 | **SmartFilter** | Classifier. Identifies which items need deep pricing. | Predicate-based filtering |
@@ -19,10 +20,16 @@ classDiagram
     direction TB
     
     class StashController {
+        -WealthSyncManager wealthSyncManager
         -ValuationService valuationService
         +getStashSummary(String league) StashSummary
         +saveStashSnapshot(String league)
         +getStashHistory(String league) List~StashSnapshot~
+    }
+
+    class CharacterController {
+        -WealthSyncManager wealthSyncManager
+        -ValuationService valuationService
         +getCharacterSummary(String league, String charName) CharacterSummary
         +saveCharacterSnapshot(String league, String charName)
         +getCharacterHistory(String league) List~CharacterSnapshot~
@@ -152,7 +159,9 @@ classDiagram
 
     %% Relationships
     StashController --> WealthSyncManager
-    WealthSyncManager --> ValuationService
+    CharacterController --> WealthSyncManager
+    StashController --> ValuationService
+    CharacterController --> ValuationService
     ValuationService --> PoeApiService
     ValuationService --> PoeNinjaApiService
     ValuationService --> PoeTradeApiService
