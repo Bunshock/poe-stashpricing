@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: poe-stash-tracker
+  
+  # OAuth2 Provider Metadata
+  security:
+    oauth2:
+      client:
+        provider:
+          poe:
+            authorization-uri: https://www.pathofexile.com/oauth/authorize
+            token-uri: https://www.pathofexile.com/oauth/token
+            user-info-uri: https://api.pathofexile.com/profile
+            user-name-attribute: name
+
+# Swagger / OpenAPI Configuration
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+
+# Actuator Endpoints
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, prometheus

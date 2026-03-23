@@ -1,0 +1,21 @@
+# Command to apply this profile:
+# mvn test -Dspring.profiles.active=test
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/poe_tracker_test
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop # Cleans the DB after every test run
+
+  # Mock or Disable OAuth2 for pure Unit Tests if needed
+  main:
+    allow-bean-definition-overriding: true
+
+# Custom property to bypass the 30-min rate limit during testing
+poe:
+  sync:
+    rate-limit-minutes: 0

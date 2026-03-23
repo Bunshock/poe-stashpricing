@@ -1,0 +1,30 @@
+# Command to apply this profile:
+# mvn spring-boot:run -Dspring-boot.run.profiles=dev
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/poe_tracker_db
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update # Automatically creates/updates tables based on @Entity
+    show-sql: true     # To debug queries
+    properties:
+      hibernate:
+        format_sql: true
+
+  # OAuth2 Registration
+  security:
+    oauth2:
+      client:
+        registration:
+          poe:
+            client-id: ${POE_CLIENT_ID}
+            client-secret: ${POE_CLIENT_SECRET}
+            authorization-grant-type: authorization_code
+            redirect-uri: "{baseUrl}/login/oauth2/code/poe"
+            scope: account:profile,account:stashes,account:characters
+            client-name: Path of Exile
