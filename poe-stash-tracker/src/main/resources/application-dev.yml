@@ -10,10 +10,13 @@ spring:
 
   jpa:
     hibernate:
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
       ddl-auto: update # Automatically creates/updates tables based on @Entity
     show-sql: true     # To debug queries
     properties:
       hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
 
   # OAuth2 Registration
